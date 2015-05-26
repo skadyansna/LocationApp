@@ -4,27 +4,48 @@
 //
 //  Created by sumit kadyan on 2015-05-24.
 //  Copyright (c) 2015 sumit kadyan. All rights reserved.
-//
+
 
 import UIKit
 import MapKit
 class ViewController: UIViewController ,CLLocationManagerDelegate,MKMapViewDelegate{
-//Links the button with the storyboard
-    @IBOutlet weak var PUSH: UIButton!
     //Links the storyboard with Viewcontroller
     
+   var LoadLocation:CLLocationCoordinate2D?
+    
+    required init(coder aDecoder: NSCoder) {
+      self.LoadLocation=nil
+        super.init(coder:aDecoder)
+    }
+    
+    
     @IBOutlet weak var map: MKMapView!
- //Location Managet that provides the location
-    var manager:CLLocationManager!
+ //Location Manager that provides the location
+    var manager=CLLocationManager()
+    var latitude:CLLocation?
+    var longitude:CLLocation?
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        manager.delegate=self
+        manager.desiredAccuracy=kCLLocationAccuracyBest
+        manager.requestWhenInUseAuthorization()
+        manager.startUpdatingLocation()
+        var userlocation=(manager.location)
+        var dat=toString(userlocation)
+        println(dat)
+        
+        
+        
+        
+     //Making the ashryonous call to the server that sends the data to the server
         
         let myUrl=NSURL(string: "https://serene-earth-2219.herokuapp.com")
         let request=NSMutableURLRequest(URL:myUrl!)
         request.HTTPMethod="POST"
         
-        var stringPost="zdfdsfsfds" // Key and Value
+        var stringPost=dat // Key and Value
         
         let data = stringPost.dataUsingEncoding(NSUTF8StringEncoding)
         
@@ -41,26 +62,18 @@ class ViewController: UIViewController ,CLLocationManagerDelegate,MKMapViewDeleg
             
             var jsonResult: NSDictionary = NSJSONSerialization.JSONObjectWithData(data, options: NSJSONReadingOptions.MutableContainers, error: nil) as! NSDictionary
             println("AsSynchronous\(jsonResult)")
-        
-            
         })
+
         
         
-        
-        
-//Creating an instance of the location manager
-        
-        manager=CLLocationManager()
-        manager.delegate=self
-        manager.desiredAccuracy=kCLLocationAccuracyBest
-        manager.requestWhenInUseAuthorization()
-        manager.requestAlwaysAuthorization()
-        manager.startUpdatingLocation()
     }
-//location manager provides the latitiude and longitutde and plotting them on the map.
+    
+    //location manager provides the latitiude and longitutde and plotting them on the map.
     
     func locationManager(manager: CLLocationManager!, didUpdateLocations locations: [AnyObject]!) {
+        println("you are in the location manager")
         var userLocation:CLLocation=locations[0] as! CLLocation
+        
         var latitude=userLocation.coordinate.latitude
         
         var longitude=userLocation.coordinate.longitude
@@ -69,23 +82,30 @@ class ViewController: UIViewController ,CLLocationManagerDelegate,MKMapViewDeleg
         
         var latDelta:CLLocationDegrees=0.05
         var lonDelta:CLLocationDegrees=0.05
-        
+    
         var span:MKCoordinateSpan=MKCoordinateSpanMake(latDelta, lonDelta)
         
         var location:CLLocationCoordinate2D=CLLocationCoordinate2DMake(latitude, longitude)
         
         var region:MKCoordinateRegion=MKCoordinateRegionMake(coordinate, span)
-    //setting the latitude and the longitude on the map.
+    
+        //setting the latitude and the longitude on the map.
         self.map.setRegion(region,animated:true)
         
-      var annotation=MKPointAnnotation()
+        var annotation=MKPointAnnotation()
         annotation.coordinate=location
         annotation.title="hello Friend"
         map.addAnnotation(annotation)
         
-        let LoadLocation=CLLocationCoordinate2DMake(latitude, longitude)
+        LoadLocation=CLLocationCoordinate2D(latitude: latDelta, longitude: lonDelta)
+        
+        
+  //To stop the updating of the position and just capture one specific position
+        manager.stopUpdatingLocation()
+       
         
     }
+    
     
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
