@@ -32,11 +32,12 @@
                     <connections>
                         <outlet property="PUSH" destination="lUD-4M-kei" id="qT4-xK-Hty"/>
                         <outlet property="map" destination="8JI-r6-hlI" id="xKg-Fx-83N"/>
+                        <outlet property="push" destination="lUD-4M-kei" id="pxW-Im-Uxm"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="316" y="359"/>
+            <point key="canvasLocation" x="346" y="127"/>
         </scene>
     </scenes>
 </document>
