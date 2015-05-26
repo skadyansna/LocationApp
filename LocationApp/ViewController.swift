@@ -11,7 +11,6 @@ import MapKit
 class ViewController: UIViewController ,CLLocationManagerDelegate,MKMapViewDelegate{
 //Links the button with the storyboard
     @IBOutlet weak var PUSH: UIButton!
-
     //Links the storyboard with Viewcontroller
     
     @IBOutlet weak var map: MKMapView!
@@ -19,6 +18,35 @@ class ViewController: UIViewController ,CLLocationManagerDelegate,MKMapViewDeleg
     var manager:CLLocationManager!
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        
+        let myUrl=NSURL(string: "https://serene-earth-2219.herokuapp.com")
+        let request=NSMutableURLRequest(URL:myUrl!)
+        request.HTTPMethod="POST"
+        
+        var stringPost="zdfdsfsfds" // Key and Value
+        
+        let data = stringPost.dataUsingEncoding(NSUTF8StringEncoding)
+        
+        request.timeoutInterval = 60
+        request.HTTPBody=data
+        request.HTTPShouldHandleCookies=false
+        
+        let queue:NSOperationQueue = NSOperationQueue()
+        
+        NSURLConnection.sendAsynchronousRequest(request, queue: queue, completionHandler:{ (response: NSURLResponse!, data: NSData!, error: NSError!) -> Void in
+            
+            
+            var err: NSError
+            
+            var jsonResult: NSDictionary = NSJSONSerialization.JSONObjectWithData(data, options: NSJSONReadingOptions.MutableContainers, error: nil) as! NSDictionary
+            println("AsSynchronous\(jsonResult)")
+        
+            
+        })
+        
+        
+        
         
 //Creating an instance of the location manager
         
@@ -54,6 +82,8 @@ class ViewController: UIViewController ,CLLocationManagerDelegate,MKMapViewDeleg
         annotation.coordinate=location
         annotation.title="hello Friend"
         map.addAnnotation(annotation)
+        
+        let LoadLocation=CLLocationCoordinate2DMake(latitude, longitude)
         
     }
     
